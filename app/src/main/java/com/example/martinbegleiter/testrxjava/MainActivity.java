@@ -40,6 +40,18 @@ public class MainActivity extends AppCompatActivity {
                         return s + ", Martin!";
                     }
                 })
+                .map(new Func1<String, Integer>() {
+                    @Override
+                    public Integer call(String s) {
+                        return s.hashCode();
+                    }
+                })
+                .map(new Func1<Integer, String>() {
+                    @Override
+                    public String call(Integer integer) {
+                        return String.valueOf(integer);
+                    }
+                })
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
