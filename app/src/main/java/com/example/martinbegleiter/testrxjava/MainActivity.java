@@ -48,31 +48,33 @@ public class MainActivity extends AppCompatActivity {
             public Observable<String> call(String s) {
                 return getTitle(s);
             }
-        })
-        .filter(new Func1<String, Boolean>() {
+        }).map(new Func1<String, String>() {
             @Override
-            public Boolean call(String s) {
-                return !s.equals("google");
+            public String call(String s) {
+                // This simulates a random exception occuring
+                if (Math.random() < 0.25) {
+                    throw new RuntimeException("Incorrect site!");
+                }
+
+                return s;
             }
         })
-        .take(2)
-        .doOnNext(new Action1<String>() {
+        .subscribe(new Subscriber<String>() {
             @Override
-            public void call(String s) {
-                save(s);
+            public void onCompleted() {
+                System.out.println("Received all items!");
             }
-        })
-        .subscribe(new Action1<String>() {
+
             @Override
-            public void call(String s) {
-                System.out.println("MARTIN: " + s);
+            public void onError(Throwable e) {
+                System.out.println("Got an error with the following exception: " + e.getMessage());
+            }
+
+            @Override
+            public void onNext(String s) {
+                System.out.println(s);
             }
         });
-    }
-
-    private void save(String s) {
-        // Method that simulates saving an item
-        System.out.println("Saving item = " + s);
     }
 
     private Observable<List<String>> query () {
