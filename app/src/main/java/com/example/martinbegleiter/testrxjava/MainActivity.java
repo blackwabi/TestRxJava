@@ -49,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
                 return getTitle(s);
             }
         })
+        .filter(new Func1<String, Boolean>() {
+            @Override
+            public Boolean call(String s) {
+                return !s.equals("google");
+            }
+        })
         .subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
