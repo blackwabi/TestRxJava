@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +33,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Observable
-                .just("Oh hello there!")
+                .just("Nice to see you")
+                .map(new Func1<String, String>() {
+                    @Override
+                    public String call(String s) {
+                        return s + ", Martin!";
+                    }
+                })
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
