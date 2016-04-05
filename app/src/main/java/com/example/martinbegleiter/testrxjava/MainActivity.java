@@ -55,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
                 return !s.equals("google");
             }
         })
+        .take(2)
+        .doOnNext(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                save(s);
+            }
+        })
         .subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -63,12 +70,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void save(String s) {
+        // Method that simulates saving an item
+        System.out.println("Saving item = " + s);
+    }
+
     private Observable<List<String>> query () {
         // This method simulates a method that returns an observable that is a list
         List<String> urlList = new ArrayList<>();
         urlList.add("www.google.com");
         urlList.add("www.nytimes.com");
         urlList.add("www.github.com");
+        urlList.add("www.yahoo.com");
         return Observable.just(urlList);
     }
 
