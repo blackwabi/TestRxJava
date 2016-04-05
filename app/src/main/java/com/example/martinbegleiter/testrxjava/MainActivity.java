@@ -30,26 +30,29 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                executeRxCode();
             }
         });
 
+
+    }
+
+    private void executeRxCode() {
         query().flatMap(new Func1<List<String>, Observable<String>>() {
             @Override
             public Observable<String> call(List<String> strings) {
                 return Observable.from(strings);
             }
-        }).map(new Func1<String, String>() {
+        }).flatMap(new Func1<String, Observable<String>>() {
             @Override
-            public String call(String s) {
-                return "http://" + s;
+            public Observable<String> call(String s) {
+                return getTitle(s);
             }
         })
         .subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                System.out.println(s);
+                System.out.println("MARTIN: " + s);
             }
         });
     }
@@ -61,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         urlList.add("www.nytimes.com");
         urlList.add("www.github.com");
         return Observable.just(urlList);
+    }
+
+    private Observable<String> getTitle(String url) {
+        // This method simulates a method that operates on a String and returns an
+        // Observable
+        String[] parts = url.split("\\.");
+        return Observable.just(parts[1]);
     }
 
     @Override
