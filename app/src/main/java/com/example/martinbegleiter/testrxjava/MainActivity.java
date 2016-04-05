@@ -31,16 +31,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Observable<String> mObservable = Observable.just("We meet yet again!");
-
-        Action1<String> onNextAction = new Action1<String>() {
-            @Override
-            public void call(String s) {
-                System.out.println(s);
-            }
-        };
-
-        mObservable.subscribe(onNextAction);
+        Observable
+                .just("Oh hello there!")
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        System.out.println(s);
+                    }
+                });
     }
 
     @Override
