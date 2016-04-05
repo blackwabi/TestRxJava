@@ -11,13 +11,20 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ExecutorService service = Executors.newFixedThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void executeRxCode() {
-        query().flatMap(new Func1<List<String>, Observable<String>>() {
+        query()
+        .subscribeOn(Schedulers.from(service))
+        .flatMap(new Func1<List<String>, Observable<String>>() {
             @Override
             public Observable<String> call(List<String> strings) {
                 return Observable.from(strings);
@@ -47,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Observable<String> call(String s) {
                 return getTitle(s);
+            }
+        }).doOnNext(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                System.out.println("I am doing onDoNext on the thread: " + Thread.currentThread());
             }
         }).map(new Func1<String, String>() {
             @Override
@@ -59,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 return s;
             }
         })
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Subscriber<String>() {
             @Override
             public void onCompleted() {
@@ -67,12 +82,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable e) {
-                System.out.println("Got an error with the following exception: " + e.getMessage());
+                System.out.println("Got an error with the following exception: "
+                        + e.getMessage());
             }
 
             @Override
             public void onNext(String s) {
-                System.out.println(s);
+                System.out.println("I am running on " + Thread.currentThread()
+                        + " and receiving " + s);
             }
         });
     }
@@ -84,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         urlList.add("www.nytimes.com");
         urlList.add("www.github.com");
         urlList.add("www.yahoo.com");
+        System.out.println("I am generating the URL list and running on: " + Thread.currentThread());
         return Observable.just(urlList);
     }
 
