@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,26 +31,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Observable<String> mObservable = Observable.just("Hello again!");
+        Observable<String> mObservable = Observable.just("We meet yet again!");
 
-        Subscriber<String> mSubscriber = new Subscriber<String>() {
+        Action1<String> onNextAction = new Action1<String>() {
             @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(String s) {
+            public void call(String s) {
                 System.out.println(s);
             }
         };
 
-        mObservable.subscribe(mSubscriber);
+        mObservable.subscribe(onNextAction);
     }
 
     @Override
