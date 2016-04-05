@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -32,32 +35,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Observable
-                .just("Nice to see you")
-                .map(new Func1<String, String>() {
-                    @Override
-                    public String call(String s) {
-                        return s + ", Martin!";
-                    }
-                })
-                .map(new Func1<String, Integer>() {
-                    @Override
-                    public Integer call(String s) {
-                        return s.hashCode();
-                    }
-                })
-                .map(new Func1<Integer, String>() {
-                    @Override
-                    public String call(Integer integer) {
-                        return String.valueOf(integer);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        System.out.println(s);
-                    }
-                });
+        query().flatMap(new Func1<List<String>, Observable<String>>() {
+            @Override
+            public Observable<String> call(List<String> strings) {
+                return Observable.from(strings);
+            }
+        }).map(new Func1<String, String>() {
+            @Override
+            public String call(String s) {
+                return "http://" + s;
+            }
+        })
+        .subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                System.out.println(s);
+            }
+        });
+    }
+
+    private Observable<List<String>> query () {
+        // This method simulates a method that returns an observable that is a list
+        List<String> urlList = new ArrayList<>();
+        urlList.add("www.google.com");
+        urlList.add("www.nytimes.com");
+        urlList.add("www.github.com");
+        return Observable.just(urlList);
     }
 
     @Override
