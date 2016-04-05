@@ -30,14 +30,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Observable<String> mObservable = Observable.create(new Observable.OnSubscribe<String>() {
-
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                subscriber.onNext("Hello World!");
-                subscriber.onCompleted();
-            }
-        });
+        Observable<String> mObservable = Observable.just("Hello again!");
 
         Subscriber<String> mSubscriber = new Subscriber<String>() {
             @Override
